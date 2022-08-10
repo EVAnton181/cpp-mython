@@ -1,0 +1,10 @@
+class Abs:
+  def calc(n):
+    if n > 0:
+      return n
+    else:
+      return -n
+
+x = Abs()
+
+print x.calc(2)

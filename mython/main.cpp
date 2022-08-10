@@ -113,10 +113,10 @@ print y.value
 
 void TestAll() {
     TestRunner tr;
-    parse::RunOpenLexerTests(tr);
-    runtime::RunObjectHolderTests(tr);
-    runtime::RunObjectsTests(tr);
-    ast::RunUnitTests(tr);
+//     parse::RunOpenLexerTests(tr);
+//     runtime::RunObjectHolderTests(tr);
+//     runtime::RunObjectsTests(tr);
+//     ast::RunUnitTests(tr);
     TestParseProgram(tr);
 
     RUN_TEST(tr, TestSimplePrints);
@@ -127,11 +127,11 @@ void TestAll() {
 
 }  // namespace
 
-int main() {
+int main(int argc, char** argv) {
     try {
-        TestAll();
-
-        RunMythonProgram(cin, cout);
+		TestAll();
+                    
+		RunMythonProgram(cin, cout);
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
 		return 1;

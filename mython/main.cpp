@@ -5,6 +5,7 @@
 #include "test_runner.h"
 
 #include <iostream>
+#include <getopt.h>
 
 using namespace std;
 
@@ -113,10 +114,10 @@ print y.value
 
 void TestAll() {
     TestRunner tr;
-//     parse::RunOpenLexerTests(tr);
-//     runtime::RunObjectHolderTests(tr);
-//     runtime::RunObjectsTests(tr);
-//     ast::RunUnitTests(tr);
+    parse::RunOpenLexerTests(tr);
+    runtime::RunObjectHolderTests(tr);
+    runtime::RunObjectsTests(tr);
+    ast::RunUnitTests(tr);
     TestParseProgram(tr);
 
     RUN_TEST(tr, TestSimplePrints);
@@ -128,10 +129,25 @@ void TestAll() {
 }  // namespace
 
 int main(int argc, char** argv) {
+	const std::string help_str{R"(
+		Usage: interpreter [OPTIONS]
+		-t  - Run tests before start)"};
     try {
-		TestAll();
-                    
-		RunMythonProgram(cin, cout);
+	   for(int opt = getopt(argc, argv, "t"); opt != -1; opt = getopt(argc, argv, "t")) {
+            switch(opt) {
+                case 't':
+                    TestAll();
+                    break;
+                case '?':
+                    std::cerr << help_str << std::endl;
+                    return 1;
+                default:
+                    std::cerr << "Unknown error\n"s;
+                    return 1;
+            }
+        }
+
+        RunMythonProgram(cin, cout);
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
 		return 1;

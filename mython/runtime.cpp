@@ -9,42 +9,42 @@ using namespace std;
 namespace runtime {
 
 ObjectHolder::ObjectHolder(std::shared_ptr<Object> data)
-    : data_(std::move(data)) {
+	: data_(std::move(data)) {
 }
 
 void ObjectHolder::AssertIsValid() const {
-    assert(data_ != nullptr);
+	assert(data_ != nullptr);
 }
 
 ObjectHolder ObjectHolder::Share(Object& object) {
-    // Возвращаем невладеющий shared_ptr (его deleter ничего не делает)
-    return ObjectHolder(std::shared_ptr<Object>(&object, [](auto* /*p*/) { /* do nothing */ }));
+	// Возвращаем невладеющий shared_ptr (его deleter ничего не делает)
+	return ObjectHolder(std::shared_ptr<Object>(&object, [](auto* /*p*/) { /* do nothing */ }));
 }
 
 ObjectHolder ObjectHolder::None() {
-    return ObjectHolder();
+	return ObjectHolder();
 }
 
 Object& ObjectHolder::operator*() const {
-    AssertIsValid();
-    return *Get();
+	AssertIsValid();
+	return *Get();
 }
 
 Object* ObjectHolder::operator->() const {
-    AssertIsValid();
-    return Get();
+	AssertIsValid();
+	return Get();
 }
 
 Object* ObjectHolder::Get() const {
-    return data_.get();
+	return data_.get();
 }
 
 ObjectHolder::operator bool() const {
-    return Get() != nullptr;
+	return Get() != nullptr;
 }
 
 bool IsTrue(const ObjectHolder& object) {
-    if (object) {
+	if (object) {
 		String *str = object.TryAs<String>();
 		if (str) {
 			return !str->GetValue().empty();
@@ -58,11 +58,11 @@ bool IsTrue(const ObjectHolder& object) {
 		  return b->GetValue();
 		}
 	}
-    return false;
+	return false;
 }
 
 void ClassInstance::Print(std::ostream& os, Context& context) {
-    if (class_.GetMethod("__str__")) {
+	if (class_.GetMethod("__str__")) {
 		os << Call("__str__",  {}, context).TryAs<String>()->GetValue();
 	}
 	else {
@@ -76,7 +76,7 @@ bool ClassInstance::HasMethod(const std::string& method, size_t argument_count) 
 		return true;
 	  }
 	}
-    return false;
+	return false;
 }
 
 Closure& ClassInstance::Fields() {
@@ -84,7 +84,7 @@ Closure& ClassInstance::Fields() {
 }
 
 const Closure& ClassInstance::Fields() const {
-    return closures_;
+	return closures_;
 }
 
 ClassInstance::ClassInstance(const Class& cls) 
@@ -94,9 +94,9 @@ ClassInstance::ClassInstance(const Class& cls)
 }
 
 ObjectHolder ClassInstance::Call(const std::string& method,
-                                 const std::vector<ObjectHolder>& actual_args,
-                                 Context& context) {
-    if (HasMethod(method, actual_args.size())){
+								const std::vector<ObjectHolder>& actual_args,
+								Context& context) {
+	if (HasMethod(method, actual_args.size())){
 		auto method_ptr = class_.GetMethod(method);
 		
 		Closure args;
@@ -130,19 +130,19 @@ const Method* Class::GetMethod(const std::string& name) const {
   if (parent_ != nullptr) {
 	return parent_->GetMethod(name);
   }
-    return nullptr;
+	return nullptr;
 }
 
 [[nodiscard]] const std::string& Class::GetName() const {
-    return name_;
+	return name_;
 }
 
 void Class::Print(ostream& os, [[maybe_unused]] Context& context) {
-    os << "Class " << name_;
+	os << "Class " << name_;
 }
 
 void Bool::Print(std::ostream& os, [[maybe_unused]] Context& context) {
-    os << (GetValue() ? "True"sv : "False"sv);
+	os << (GetValue() ? "True"sv : "False"sv);
 }
 
 bool Equal(const ObjectHolder& lhs, const ObjectHolder& rhs, Context& context) {
@@ -165,7 +165,7 @@ bool Equal(const ObjectHolder& lhs, const ObjectHolder& rhs, Context& context) {
 			
 		}
 	}
-    throw std::runtime_error("Cannot compare objects for equality"s);
+	throw std::runtime_error("Cannot compare objects for equality"s);
 }
 
 bool Less(const ObjectHolder& lhs, const ObjectHolder& rhs, Context& context) {
@@ -185,12 +185,12 @@ bool Less(const ObjectHolder& lhs, const ObjectHolder& rhs, Context& context) {
 			return lhs.TryAs<ClassInstance>()->Call("__lt__",  args, context).TryAs<Bool>()->GetValue();
 		}
 	}
-    throw std::runtime_error("Cannot compare objects for less"s);
+	throw std::runtime_error("Cannot compare objects for less"s);
 }
 
 bool NotEqual(const ObjectHolder& lhs, const ObjectHolder& rhs, Context& context) {
 	return !Equal(lhs, rhs,  context);
-    throw std::runtime_error("Cannot compare objects for equality"s);
+	throw std::runtime_error("Cannot compare objects for equality"s);
 }
 
 bool Greater(const ObjectHolder& lhs, const ObjectHolder& rhs, Context& context) {
@@ -205,7 +205,7 @@ bool Greater(const ObjectHolder& lhs, const ObjectHolder& rhs, Context& context)
 }
 
 bool LessOrEqual(const ObjectHolder& lhs, const ObjectHolder& rhs, Context& context) {
-  	try {
+	try {
 		auto eq = Equal(lhs, rhs, context);
 		auto lt = Less(lhs, rhs, context);
 		return (eq || lt); 
